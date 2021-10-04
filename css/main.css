@@ -7,9 +7,14 @@ body{
     font-family: Arial, Helvetica, sans-serif;
 }
 
+
 div{
     margin:auto;
     margin-bottom: 20px;
+}
+
+.img-header{
+    width:250px;
 }
 
 button{
