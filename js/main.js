@@ -1,20 +1,27 @@
 'use strict';
-const MAX_NEIGHBORS = ' ';
-const LEFT_CLICK = 1;
-const MIDDLE_CLICK = 2;
-const RIGHT_CLICK = 3;
-// --------------------------------------------------------------------------------------------------- //
+// ----------------------------------------- GAME SYMBOLS ----------------------------------------- //
 
 const EMPTY = ' ';
 const FLAG = '🚩';
 const MINE = '💥';
 
-// ❤️ , 💔 , 💖 , 💡, 💣,
-// 🤯, 😃, 😎
+// ---------------------------------------- PLAYER SYMBOLS ---------------------------------------- //
 
-// --------------------------------------------------------------------------------------------------- //
-var gInterval;
+const PLAYER = '😃'
+const WINNER = '😎'
+const LOSER = '🤯'
+// ❤️ , 💔 , 💖 , 💡, 💣,
+
+// --------------------------------------- GLOBAL VARIABLES --------------------------------------- //
+
+const LEFT_CLICK = 1;
+const RIGHT_CLICK = 3;
+
 var gBoard;
+var gLevel = {
+	SIZE: 4,
+	MINES: 2,
+};
 
 var gGame = {
 	isOn: false,
@@ -23,7 +30,7 @@ var gGame = {
 	secsPassed: 0,
 };
 
-var gLevel = { SIZE: 4, MINES: 2, };
+var gInterval;
 
 var cell = {
 	minesAroundCount: 4,
@@ -32,9 +39,10 @@ var cell = {
 	isMarked: true,
 };
 
-// --------------------------------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------ //
 
 function initGame() {
+	console.log(`***INITIALIZE GAME***`);
     gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 };
 	gBoard = buildBoard();
 	renderBoard(gBoard);
@@ -49,6 +57,7 @@ function buildBoard() {
 
 function setMinesNegsCount(board) {
 	console.log(board.length);
+	console.log(board);
 	for (var i = 0; i < board.length; i++) {
 		for (var j = 0; j < board.length; j++) {
 			if (!board[i][j].isMine) {
@@ -59,7 +68,7 @@ function setMinesNegsCount(board) {
 							i + row < board.length &&
 							j + col > 0 &&
 							j + col < board.length
-						) {
+							) {
 							if (board[i + row][j + col].isMine)
 								board[i][j].minesAroundCount++;
 						}
@@ -71,17 +80,13 @@ function setMinesNegsCount(board) {
 }
 
 function setRandomMines(board) {
-	// board[1][1] = board[2][2] = {
-	// 	minesAroundCount: 0,
-	// 	isShown: false,
-	// 	isMine: true,
-	// 	isMarked: false,
-	// };
+	 var gRandomMines =[];
 	for (var i = 0; i < gLevel.MINES; i++) {
-		//rnd can get the same location more than once
 		var rndLocation = getRandomLocation();
+		while (gRandomMines.includes(rndLocation)) rndLocation = getRandomLocation();
+		gRandomMines.push(rndLocation);
 		board[rndLocation.i][rndLocation.j] = {
-			minesAroundCount: NaN,
+			minesAroundCount: -1,
 			isShown: false,
 			isMine: true,
 			isMarked: false,
@@ -95,6 +100,7 @@ function cellClicked(event, elCell, i, j) {
         gGame.isOn = true;
         startTimer();
     }
+
 	var cell = gBoard[i][j];
 	if (!cell.isMarked && !cell.isShown) {
 		var value = null;
@@ -128,13 +134,12 @@ function cellClicked(event, elCell, i, j) {
 }
 
 function gameOver() {
-	console.log(`in game over!`);
+	console.log(`***GAME OVER***`);
     clearTimer();
 }
 
 function changeLevel(elBtnLvl) {
     if (!elBtnLvl.classList.contains('marked')) {
-
         var elLevels = document.querySelectorAll('.btn-level');
         for (var i = 0; i < elLevels.length; i++)
             elLevels[i].classList.remove('marked');

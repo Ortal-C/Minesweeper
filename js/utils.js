@@ -27,7 +27,13 @@ function createSquareMat(size) {
 // ------------------------------------------ R E N D E R   M A T R I X ------------------------------------------ //
 
 function renderBoard() {
-	var strHTML = '<table border="0" align="center"><tbody>\n';
+	// creating board 
+	var strHTML = `<table align="center"><tbody>\n`
+
+	// information-row
+	strHTML+= `<tr><td class="cell score" style="width:${gBoard.length/4 * 40}px"><span></span></td>\n<td class="cell user" style="width:${gBoard.length/2 * 40}px">${PLAYER}</td><td class="cell timer" style="width:${gBoard.length/4 * 40}px"><span></span></td></tr>`
+
+	// creating board cells 
 	for (var i = 0; i < gBoard.length; i++) {
 		strHTML += '<tr>\n';
 		for (var j = 0; j < gBoard.length; j++) {
