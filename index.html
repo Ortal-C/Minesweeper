@@ -11,9 +11,8 @@
 <body onload="initGame()" oncontextmenu="return false;">
     <div class="header">
         <div><img class="img-header" src="img/Header.JPG" alt="Minesweeper logo"></div>
-        <div>
-            <button class="btn instructions" onclick="showInstructions()">Instructions</button>
-        </div>
+        <div><img class="img-information" src="img/information-icon.jpg" alt="Information" onclick="showInstructions()"></div>
+        
         <div>
             <ul>
             <button class="btn-level marked Beginner" onclick="changeLevel(this)"><span>Beginner</span></button>
@@ -24,6 +23,7 @@
     
     <div class='game-area'></div>
     
+    <footer>Ortal Cohen</footer>
     <script src="js/main.js"></script>
     <script src="js/utils.js"></script>
 </body>

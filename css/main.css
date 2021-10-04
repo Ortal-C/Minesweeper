@@ -17,6 +17,11 @@ div{
     width:250px;
 }
 
+.img-information{
+    cursor: pointer;
+    display:inline-block;
+}
+
 button{
     height: 20px;
     width: 100px;
