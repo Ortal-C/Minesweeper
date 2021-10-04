@@ -1,12 +1,5 @@
 'use strict';
 
-function init() {
-	//in here => need to initialize all global variables
-	// build board
-	// create
-	// render
-	// intervals initials if needed
-}
 // -------------------------------------------- C R E A T E   M A T R I X ------------------------------------------ //
 
 function createSquareMat(size) {
@@ -31,7 +24,11 @@ function renderBoard() {
 	var strHTML = `<table align="center"><tbody>\n`
 
 	// information-row
-	strHTML+= `<tr><td class="cell score" style="width:${gBoard.length/4 * 40}px"><span></span></td>\n<td class="cell user" style="width:${gBoard.length/2 * 40}px">${PLAYER}</td><td class="cell timer" style="width:${gBoard.length/4 * 40}px"><span></span></td></tr>`
+	//<td class="cell info score" style="width:${gBoard.length/4 * 40}px">
+	strHTML+= `<tr><span></span></td>\n
+	<td class="cell info user" style="width:${gBoard.length/2 * 40}px" onclick="initGame()">${PLAYER}</td>\n
+	<td class="cell info timer" style="width:${gBoard.length/2 * 40}px">⏰<span></span></td>
+	\n</tr>`
 
 	// creating board cells 
 	for (var i = 0; i < gBoard.length; i++) {
@@ -55,7 +52,6 @@ function renderCell(location, value = '') {
     elCell.innerHTML = theValue;
 }
 
-
 // -------------------------------------------- G E T   R A N D O M S -------------------------------------------- //
 
 //Inclusive
@@ -65,15 +61,6 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-	var color = '#';
-	for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
-}
-
 function getRandomLocation() {
     var rndI = getRandomInt(0, gLevel.SIZE - 1);
 	var rndJ = getRandomInt(0, gLevel.SIZE - 1);
@@ -81,28 +68,6 @@ function getRandomLocation() {
         i: rndI,
 		j: rndJ,
 	}; /* : null);*/
-}
-
-// ----------------------------------------- R E S E T   + S H U F F L E ----------------------------------------- //
-
-function resetNums(range) {
-    var arr = [];
-	for (var i = 1; i <= range; i++) {
-        arr.push(i);
-	}
-	return arr;
-}
-
-function shuffle(items) {
-    var rndIdx, keep;
-	for (var i = items.length - 1; i > 0; i--) {
-        rndIdx = getRandomInt(1, items.length - 1);
-		//swapping
-		keep = items[i];
-		items[i] = items[rndIdx];
-		items[rndIdx] = keep;
-	}
-	return items;
 }
 
 // -------------------------------------------------- T I M E R -------------------------------------------------- //
@@ -128,4 +93,10 @@ function clearTimer() {
 function playSound(url) {
     var sound = new Audio(url);
     sound.play();
+}
+
+function showInstructions() {
+	alert(
+		`The goal of the game is to uncover all the squares that do not contain mines without being "blown up" by clicking on a square with a mine underneath.`
+	);
 }

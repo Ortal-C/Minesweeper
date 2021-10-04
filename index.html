@@ -5,19 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper</title>
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/levels.css">
 </head>
 <body onload="initGame()" oncontextmenu="return false;">
     <div class="header">
-        <div><h1>Minesweeper</h1></div>
+        <div><img src="img/Header.JPG"></div>
         <div>
             <button class="btn instructions" onclick="showInstructions()">Instructions</button>
         </div>
         <div>
-            <button class="btn-level marked" onclick="changeLevel(this)">Beginner</button>
-            <button class="btn-level" onclick="changeLevel(this)">Medium</button>
-            <button class="btn-level" onclick="changeLevel(this)">Expert</button>
-        </div>
+            <ul>
+            <button class="btn-level marked Beginner" onclick="changeLevel(this)"><span>Beginner</span></button>
+            <button class="btn-level Medium" onclick="changeLevel(this)">Medium</button>
+            <button class="btn-level Expert" onclick="changeLevel(this)">Expert</button>
+         </ul></div>
     </div>
     
     <div class='game-area'></div>
