@@ -1,6 +1,5 @@
 'use strict';
-
-// -------------------------------------------- C R E A T E   M A T R I X ------------------------------------------ //
+// ----------------------------------------------- CREATE MATRIX ---------------------------------------------- //
 
 function createSquareMat(size) {
 	var mat = [];
@@ -17,8 +16,8 @@ function createSquareMat(size) {
 	}
 	return mat;
 }
-// ---------------------------------------- R E N D E R  C E L L S  \  M A T R I X --------------------------------- //
 
+// ----------------------------------------------- MATRIX RENDER ---------------------------------------------- //
 function renderBoard() {
 	// creating board
 	var strHTML = `<table align="center"><tbody>\n`;
@@ -60,12 +59,12 @@ function renderBoard() {
 	renderSafeMoves();
 }
 
+// ----------------------------------------------- CELLS RENDERS ---------------------------------------------- //
 
 function getCellContent(location) {
 	var elCell = getCellSelector(location);
 	return elCell.innerHTML+'';
 }
-
 
 function renderCell(location, value = null) {
 	if (!value) value = gBoard[location.i][location.j].minesAroundCount;
@@ -92,6 +91,7 @@ function renderHints() {
 	var strHints = gHints.join('');
 	document.querySelector('.hints').innerText = strHints;
 }
+
 function renderSafeMoves() {
 	var strSafeMoves = gSafeMoves.join('');
 	document.querySelector('.safe').innerText = strSafeMoves;
@@ -105,21 +105,6 @@ function renderGameOverMsg(isWin) {
 	var msgColor = isWin ? 'green' : 'darkred';
 	var elGameOverMsg = document.querySelector('.game-over-row');
 	elGameOverMsg.innerHTML = `<td class="cell" style="color: ${msgColor}; width:${gBoard.length * CELL_SIZE}px; height:40px">${msg}<br/><span style="color:black;">🕹GAME OVER🕹</span></td>\n`;
-}
-
-// --------------------------------------------- GET   RANDOMS --------------------------------------------- //
-
-//Inclusive
-function getRandomInt(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function getRandomLocation() {
-	var rndI = getRandomInt(0, gLevel.SIZE - 1);
-	var rndJ = getRandomInt(0, gLevel.SIZE - 1);
-	return { i: rndI, j: rndJ };
 }
 
 // -------------------------------------------------- TIMER -------------------------------------------------- //
@@ -147,7 +132,20 @@ function clearTimer() {
 	gTimerInterval = null;
 }
 
-// ------------------------------------------------- OTHERS ------------------------------------------------- //
+// ------------------------------------------------- GENERAL ------------------------------------------------- //
+
+function getRandomInt(min, max) {
+	// Inclusive
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function getRandomLocation() {
+	var rndI = getRandomInt(0, gLevel.SIZE - 1);
+	var rndJ = getRandomInt(0, gLevel.SIZE - 1);
+	return { i: rndI, j: rndJ };
+}
 
 function playSound(url) {
 	var sound = new Audio(url);
@@ -155,7 +153,7 @@ function playSound(url) {
 }
 
 function showInstructions() {
-	alert(
-		`Uncover all the squares that do not contain mines without being "blown up" by clicking on a square with a mine underneath.`
+	confirm(
+		'🎯  Uncover all the squares that do not contain mines without being "blown up" by clicking on a square with a mine underneath. \n\n▶ Click on emoji-face for restart the game.\n\n🖱 For switch game-level click on none-blue button. \n\nMINES TO COLLECT IN EACH LEVEL: \n👶Beginner: 2 mines      🤩Medium: 10 mines      🐱‍👤Expert: 30 mines'
 	);
 }
