@@ -155,7 +155,7 @@ function leftClickHandle(cell, elCell, i, j) {
 		} 
 		else {
 			expandShown(gBoard, elCell, i, j);
-			playSound('/sound/cell-click.wav');
+			playSound('./sound/cell-click.wav');
 		}
 	}
 	return;
@@ -175,7 +175,7 @@ function rightClickHandle(cell, i, j) {
 	}
 	cell.isMarked = true;
 	gGame.markedCount++;
-	playSound('/sound/flag-click.wav');
+	playSound('./sound/flag-click.wav');
 	renderCell({ i: i, j: j }, FLAG);
 }
 
@@ -217,7 +217,7 @@ function handleFirstClick(elCell, i, j) {
 		gGame.isOn = true;
 		startTimer();
 		expandShown(gBoard, elCell, i, j);
-		playSound('sound/cell-click.wav');
+		playSound('./sound/cell-click.wav');
 	}
 }
 
@@ -247,7 +247,7 @@ function isVictory() {
 
 function gameOver(isWin = false) {
 	renderGameOverMsg(isWin);
-	var url = isWin ? '/sound/win-game.mp3' : '/sound/mine-click.wav';
+	var url = isWin ? './sound/win-game.mp3' : './sound/mine-click.wav';
 	playSound(url);
 	gLives = gHints = [];
 	clearTimer();
