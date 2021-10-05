@@ -10,13 +10,15 @@
 	<body onload="initGame()" oncontextmenu="return false;">
 		<div class="header">
 			<div>
-				<div class="header">
-					<img class="img-header" src="img/Header.png" alt="Minesweeper logo" />
+				<div class="instructions">
+					<img class="img-instructions" src="img/info.png" alt="instructions" onclick="showInstructions()"/>
 				</div>
+				<img class="img-header" src="img/Header.png" alt="Minesweeper logo" />
+				
 			</div>
 
 			<div class="choose-level">
-				<button class="btn-level Beginner marked" onclick="changeLevel(this)">Beginner</button>
+				<button class="btn-level Beginner" onclick="changeLevel(this)">Beginner</button>
 				<button class="btn-level Medium" onclick="changeLevel(this)">Medium</button>
 				<button class="btn-level Expert" onclick="changeLevel(this)">Expert</button>
 			</div>

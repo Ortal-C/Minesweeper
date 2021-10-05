@@ -1,28 +1,40 @@
 * {
 	box-sizing: border-box;
 }
+
 body {
+	min-height: 100vh;
 	background: white url('/img/bgc.jpg') center center/cover fixed;
 	text-align: center;
-	font-size: 14px;
 	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
 }
 
 div {
 	margin: auto;
 }
 
+.instructions {
+	position: fixed;
+	top: 2%;
+	right: 2%;
+	height: 30px;
+	display: inline-block;
+}
+
+.img-instructions {
+	height: 50px;
+	display: inline-block;
+	cursor: pointer;
+}
+
 .img-header {
-    height: 165px;
+	height: 165px;
+	display: inline-block;
 }
 
 .choose-level {
 	display: inline;
-}
-
-.information {
-	display: inline;
-	cursor: pointer;
 }
 
 /* -------------------------------- B U T T O N S   S T Y L E ------------------------------------- */
@@ -44,7 +56,7 @@ div {
 	justify-content: center;
 	position: relative;
 	text-align: center;
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .btn-level:after {
@@ -68,28 +80,28 @@ div {
 
 .btn-level.Beginner:hover {
 	background-color: green;
-    color:whitesmoke
+	color: whitesmoke;
 }
 
 .btn-level.Medium:hover {
 	background-color: darkorange;
-    color:whitesmoke
+	color: whitesmoke;
 }
 
 .btn-level.Expert:hover {
 	background-color: darkred;
-    color:whitesmoke
+	color: whitesmoke;
 }
 
 .marked {
 	background-color: #2b6dc3;
-    color:whitesmoke
+	color: whitesmoke;
+	cursor: text;
 }
 
-.Beginner.marked .cell{
-    height: 40px;
-    width: 40px;
-    
+.Beginner.marked .cell {
+	height: 40px;
+	width: 40px;
 }
 
 /* ---------------------------------- C E L L S  S T Y L E ---------------------------------------- */
@@ -118,8 +130,8 @@ div {
 	background: linear-gradient(to bottom, #dcdcdc 5%, #dcdcdc 100%);
 }
 
-.game-over-msg{
-    color: darkred;
+.game-over-msg {
+	color: darkred;
 }
 
 /* ---------------------------------------- F O O T E R ------------------------------------------- */
