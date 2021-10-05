@@ -1,94 +1,148 @@
-*{
-    box-sizing: border-box;
+* {
+	box-sizing: border-box;
 }
-body{
-    text-align: center;
-    font-size: 14px;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-
-div{
-    margin:auto;
+body {
+	text-align: center;
+	font-size: 14px;
+	font-family: Arial, Helvetica, sans-serif;
+	/* background: white url('/img/bgc.jpg') center center/cover repeat content-box; */
+	/* background: white url('/img/istockphoto-1212342896-170667a.jpg') center center/cover repeat content-box; */
+	background: white url('/img/bgc2.jpg') center center/cover repeat content-box;
 }
 
-.img-header{
-    width:320px;
+div {
+	margin: auto;
 }
 
-.information{
-    display: inline;
-    cursor: pointer;
+.img-header {
+	width: 300px;
 }
 
-.cell {
-    height: 30px;
-    width: 30px;
-    text-align: center;
-    vertical-align: middle;
-    display: inline-block;
-	box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
-	background-color:#ededed;
-	border-radius:6px;
-	border:1px solid #dcdcdc;
-	color:#777777;
-	font-weight:bold;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #ffffff;
-	cursor:pointer;
+.choose-level {
+	display: inline;
 }
 
-.cell:hover {
-    background:linear-gradient(to bottom, #dcdcdc 5%, #dcdcdc 100%);
+.information {
+	display: inline;
+	cursor: pointer;
 }
 
-.clicked {
-    background:linear-gradient(to bottom, #dcdcdc 5%, #dcdcdc 100%);
+
+.info {
+	height: 30px;
+	width: 40px;
 }
 
-.info{
-    height: 30px;
+
+/* -------------------------------- B U T T O N S   S T Y L E ------------------------------------- */
+
+.btn-level {
+	width: 125px;
+	height: 30px;
+	display: inline-block;
+	align-items: center;
+	background-color: whitesmoke;
+	border: 2px solid #111;
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: #111;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 14px;
+	height: 40px;
+	justify-content: center;
+	position: relative;
+	text-align: center;
+    margin-bottom: 20px;
+}
+
+.btn-level:after {
+	background-color: grey;
+	border-radius: 8px;
+	content: '';
+	display: block;
+	height: 40px;
+	left: 0;
+	width: 100%;
+	position: absolute;
+	top: -2px;
+	transform: translate(5px, 8px);
+	transition: transform 0.2s ease-out;
+	z-index: -1;
+}
+
+.btn-level:hover:after {
+	transform: translate(0, 0);
+}
+
+.btn-level:active {
+	background-color: #ffdeda;
+	outline: 0;
+}
+
+.btn-level.Beginner:hover {
+	background-color: green;
+    color:whitesmoke
+}
+
+.btn-level.Medium:hover {
+	background-color: darkorange;
+    color:whitesmoke
+}
+
+.btn-level.Expert:hover {
+	background-color: darkred;
+    color:whitesmoke
+}
+
+.marked {
+	background-color: #2b6dc3;
+    color:whitesmoke
+}
+
+.Beginner.marked .cell{
+    height: 40px;
     width: 40px;
 }
 
+/* ---------------------------------- C E L L S  S T Y L E ---------------------------------------- */
 
-/* -------------------------------------------------------------------------- */
-.btn-level {
-    width: 100px;
-    height: 30px;
-    display: inline-block;
-    border: 0.16em solid rgb(255, 255, 255);
-    border-radius: 2em;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-weight: 600;
-    color: #ffffff;
-    text-shadow: 0 0.04em 0.04em rgba(255, 255, 255, 0.253);
-    text-align: center;
-    transition: all 0.2s;
-    background-color: lightgray;
-  }
-  
-  .btn-level.Beginner:hover{
-    background-color: green;
-  }
-  .btn-level.Medium:hover{
-    background-color: orange;
-  }
-  .btn-level.Expert:hover{
-    background-color: darkred;
-  }
-
-  
-.marked{
-    background-color: #36a2eb;
+.cell {
+	height: 30px;
+	width: 30px;
+	text-align: center;
+	vertical-align: middle;
+	display: inline-block;
+	box-shadow: inset 0px 1px 0px 0px #ffffff;
+	background: linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	background-color: #ededed;
+	border-radius: 6px;
+	border: 1px solid #dcdcdc;
+	color: #777777;
+	font-weight: bold;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #ffffff;
+	cursor: pointer;
 }
 
+.cell:hover {
+	background: linear-gradient(to bottom, #dcdcdc 5%, #dcdcdc 100%);
+}
+
+.clicked {
+	background: linear-gradient(to bottom, #dcdcdc 5%, #dcdcdc 100%);
+}
+
+.game-over-msg{
+    color: darkred;
+}
+
+/* ---------------------------------------- F O O T E R ------------------------------------------- */
+
 footer {
-    position: absolute;
-    bottom:0px; /* negative value of footer height */
-    height: 5%;
-    width: 100%;
-    clear:both;
-  }
+	position: absolute;
+	bottom: 0px; /* negative value of footer height */
+	height: 3%;
+	width: 100%;
+	clear: both;
+}

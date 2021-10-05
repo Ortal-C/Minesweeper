@@ -6,34 +6,19 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Minesweeper</title>
 		<link rel="stylesheet" href="css/main.css" />
-		<link rel="stylesheet" href="css/levels.css" />
 	</head>
 	<body onload="initGame()" oncontextmenu="return false;">
 		<div class="header">
 			<div>
 				<div class="header">
-					<img class="img-header" src="img/Header.JPG" alt="Minesweeper logo" />
+					<img class="img-header" src="img/Header.png" alt="Minesweeper logo" />
 				</div>
-				<!-- <div class="information">
-					<img
-						class="img-information"
-						src="img/information-icon.jpg"
-						alt="Information"
-						onclick="showInstructions()"
-					/>
-				</div> -->
 			</div>
 
-			<div>
-				<button class="btn-level Beginner marked" onclick="changeLevel(this)">
-					Beginner
-				</button>
-				<button class="btn-level Medium" onclick="changeLevel(this)">
-					Medium
-				</button>
-				<button class="btn-level Expert" onclick="changeLevel(this)">
-					Expert
-				</button>
+			<div class="choose-level">
+				<button class="btn-level Beginner marked" onclick="changeLevel(this)">Beginner</button>
+				<button class="btn-level Medium" onclick="changeLevel(this)">Medium</button>
+				<button class="btn-level Expert" onclick="changeLevel(this)">Expert</button>
 			</div>
 		</div>
 

@@ -24,9 +24,9 @@ function renderBoard() {
 	var strHTML = `<table align="center"><tbody>\n`;
 
 	// information-row
-	strHTML += `<tr><span></span></td>\n
-	<td class="cell info user" style="width:${(gBoard.length / 2) * 30}px" onclick="initGame()">${PLAYER}</td>\n
-	<td class="cell info timer" style="width:${(gBoard.length / 2) * 30}px">⏰ <span></span></td>
+	strHTML += `<tr class="info-row"></td>\n
+	<td class="cell user" style="width:${(gBoard.length / 2) * 30}px" onclick="initGame()">${PLAYER}</td>\n
+	<td class="cell timer" style="width:${(gBoard.length / 2) * 30}px; cursor:Block">⏰ <span></span></td>
 	\n</tr>`;
 
 	// creating board cells
@@ -41,13 +41,21 @@ function renderBoard() {
 		}
 		strHTML += '</tr>\n';
 	}
-	strHTML += '</tbody></table>';
+	
+	// information-row
+	strHTML += `<tr class="info-bottom-row">\n
+	<td class="cell lives" style="width:${(gBoard.length / 2) * 30}px"></td>\n
+	<td class="cell hints" style="width:${(gBoard.length / 2) * 30}px" onClick="useHint()"></td>\n</tr>`;
+	strHTML += '<tr class="game-over-row"></tr></tbody></table>';
 	var elContainer = document.querySelector('.game-area');
 	elContainer.innerHTML = strHTML;
+	renderLives();
+	renderHints();
 }
 
 function renderCell(location, value = null) {
 	if (!value) value = gBoard[location.i][location.j].minesAroundCount;
+	if (value < 0 ) value = MINE
 	var elCell = getCellSelector(location.i, location.j);
 	elCell.innerHTML = value;
 }
@@ -56,10 +64,34 @@ function getCellSelector(row, col){
 	return document.querySelector(`.cell-${row}-${col}`);
 }
 
+function renderLives(){
+	var strLives =  gLives.join('');
+	var currShownLives =  gLives.length;
+	while(gLives.length < 3 && currShownLives < 3) {
+		strLives += DEAD;
+		currShownLives++;
+	}
+	document.querySelector('.lives').innerText = strLives
+}
+
+function renderHints(){
+	var strHints = gHints.join('')
+	document.querySelector('.hints').innerText =  strHints;
+}	
+
+function renderGameOverMsg(isWin){
+	document.querySelector('.user').innerText = isWin ? WINNER : LOSER
+	document.querySelector('.info-bottom-row').style.display = 'none';
+	
+	var msg = isWin ? 'YOU WON' : `YOU LOSE`
+	var msgColor = isWin ? 'green' : 'darkred';
+	var elGameOverMsg = document.querySelector('.game-over-row');
+	elGameOverMsg.innerHTML = `<td class="cell" style="color: ${msgColor}; width:${(gBoard.length) * 30}px; height:40px">${msg}<br/><span style="color:black;">🕹GAME OVER🕹</span></td>\n`
+}
+
 // -------------------------------------------- G E T   R A N D O M S -------------------------------------------- //
 
 //Inclusive
-
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
@@ -74,6 +106,12 @@ function getRandomLocation() {
 
 // -------------------------------------------------- T I M E R -------------------------------------------------- //
 
+function resetTimer(){
+	document.querySelector('.timer span').innerText = '00:00'
+	gGame.secsPassed = 0;
+	clearTimer();
+}
+
 function startTimer() {
 	if (gGame.isOn) {
 		var elStopper = document.querySelector('.timer span');
@@ -81,6 +119,7 @@ function startTimer() {
 		gInterval = setInterval(() => {
 			var currTime = ((Date.now() - startTime) / 1000).toFixed(2);
 			elStopper.innerHTML = currTime;
+			gGame.secsPassed = currTime;
 		}, 100);
 	}
 }

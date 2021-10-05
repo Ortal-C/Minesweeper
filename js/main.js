@@ -4,21 +4,27 @@
 const EMPTY = ' ';
 const FLAG = '🚩';
 const MINE = '💥';
+const LIVE = '❤️';
+const DEAD = '🤍';
+const SAVER_SOUL = '😇';
+const HINT = '💡';
 
 // ---------------------------------------- PLAYER SYMBOLS ---------------------------------------- //
 
-// ❤️ , 💔 , 💖 , 💡, 💣,
 const PLAYER = '😃';
-const WINNER = '😎';
+const WINNER = '🏆';
 const LOSER = '🤯';
 
 // --------------------------------------- GLOBAL VARIABLES --------------------------------------- //
 
 const LEFT_CLICK_CODE = 1;
 const RIGHT_CLICK_CODE = 3;
+const HINT_DISPLAY_TIME = 1000;
 
 var gBoard;
 var gMineLocations;
+var gLives;
+var gHints;
 var gInterval;
 var gLevel = {
 	SIZE: 4,
@@ -36,8 +42,11 @@ var gGame = {
 function initGame() {
 	console.log(`*** INITIALIZE GAME ***`);
 	gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 };
+	gLives = [LIVE, LIVE, LIVE];
+	gHints = [HINT, HINT, HINT];
 	gBoard = buildBoard();
 	renderBoard(gBoard);
+	resetTimer();
 }
 
 function buildBoard() {
@@ -85,7 +94,7 @@ function setRandomMines(board) {
 }
 
 function getMineLocation(board) {
-	// Get random mines-free location
+	// Get mines-free random location
 	var rndLocation = getRandomLocation();
 	while (board[rndLocation.i][rndLocation.j].isMine) {
 		rndLocation = getRandomLocation();
@@ -95,45 +104,75 @@ function getMineLocation(board) {
 
 // ------------------------------------------------------------------------------------------------ //
 
-function cellClicked(event, elCell, i, j) {
+function firstClickIsntMine(i, j) {
+	while (gBoard[i][j].isMine) {
+		gBoard = buildBoard();
+	}
+	renderBoard();
+	return gBoard[i][j];
+}
+
+function handleFirstClick(i, j) {
+	var cell = gBoard[i][j];
+	if (gGame.secsPassed === 0) {
+		if (cell.isMine) {
+			cell = firstClickIsntMine(i, j);
+		}
+		gGame.isOn = true;
+		startTimer();
+		renderCell({ i: i, j: j });
+	}
+}
+
+function leftClickHandle(cell, elCell, i, j) {
+	if (!gGame.isOn) {
+		if (gGame.secsPassed === 0) handleFirstClick(i,j);
+		else return;
+	}
+
+	if (cell.isMine) {
+		if (gLives.length > 0) {
+			gGame.markedCount++;
+			renderCell({ i: i, j: j }, SAVER_SOUL);
+			gLives.pop();
+			renderLives();
+		} else {
+			renderCell({ i: i, j: j }, MINE);
+			return gameOver(false);
+		}
+	} else {
+		expandShown(gBoard, elCell, i, j);
+		playSound('/sound/cell-click.wav');
+	}
+}
+function rightClickHandle(cell, i, j) {
 	if (!gGame.isOn) {
 		gGame.isOn = true;
 		startTimer();
 	}
-
-	var cell = gBoard[i][j];
-	if (!cell.isMarked && !cell.isShown) {
-		switch (event.which) {
-			case LEFT_CLICK_CODE:
-				if (cell.isMine) {
-					renderCell({ i: i, j: j }, MINE);
-					playSound('/sound/mine-click.wav');
-					document.querySelector('.user').innerText = LOSER;
-					return gameOver();
-				} else {
-					expandShown(gBoard, elCell, i, j);
-					playSound('/sound/cell-click.wav');
-				}
-				break;
-
-			case RIGHT_CLICK_CODE:
-				playSound('/sound/flag-click.wav');
-				cell.isMarked = true;
-				gGame.markedCount++;
-				renderCell({ i: i, j: j }, FLAG);
-				break;
-
-			default:
-				return;
-		}
-		if (isVictory()) {
-			document.querySelector('.user').innerText = WINNER;
-			gameOver();
-		}
-	}
+	gGame.markedCount++;
+	cell.isMarked = cell.isShown = true;
+	playSound('/sound/flag-click.wav');
+	renderCell({ i: i, j: j }, FLAG);
 }
 
-function expandShown(board, elCell, i, j) {
+function cellClicked(event, elCell, i, j) {
+	var cell = gBoard[i][j];
+	switch (event.which) {
+		case LEFT_CLICK_CODE:
+			leftClickHandle(cell, elCell, i, j);
+			break;
+		case RIGHT_CLICK_CODE:
+			rightClickHandle(cell, i, j);
+			break;
+
+		default:
+			return;
+	}
+	if (isVictory()) return gameOver(true);
+}
+
+function expandShown(board, elCell, i, j, toShow = true) {
 	var currCell = board[i][j];
 	if (currCell.minesAroundCount === 0) {
 		for (var diffRow = -1; diffRow < 2; diffRow++) {
@@ -142,37 +181,39 @@ function expandShown(board, elCell, i, j) {
 				var currNegCol = j + diffCol;
 				if (isLocationInRange(currNegRow, currNegCol)) {
 					var negCell = board[currNegRow][currNegCol];
-					if (!negCell.isShown) {
-						elCell.classList.add('clicked');
-						negCell.isShown = true;
-						gGame.shownCount++;
-						elCell = getCellSelector(currNegRow,currNegCol);
-						expandShown(board, elCell, currNegRow, currNegCol);
+					if (negCell.isShown !== toShow) {
+						negCell.isShown = toShow;
+						elCell = getCellSelector(currNegRow, currNegCol);
+						expandShown(board, elCell, currNegRow, currNegCol, toShow);
 					}
 				}
 			}
 		}
-	} else {
-		if (currCell && !currCell.isShown) {
-			currCell.isShown = true;
-			gGame.shownCount++;
-			elCell.classList.add('clicked');
-		}
 	}
-	elCell.classList.add('clicked');
-	renderCell({ i: i, j: j });
+
+	if (currCell.isShown !== toShow || currCell.isMarked !== toShow) {
+		currCell.isShown = currCell.isMarked = toShow;
+		gGame.shownCount += toShow ? 1 : -1;
+		renderCell({ i: i, j: j }, toShow ? currCell.minesAroundCount : ' ');
+		console.log(`i:${i} j:${j}`, gGame);
+	}
 	return;
 }
 
 // ------------------------------------------------------------------------------------------------ //
 
-function isVictory(){
-	return gGame.shownCount + gGame.markedCount === gLevel.SIZE ** 2;
+function isVictory() {
+	return gGame.markedCount + gGame.shownCount === gLevel.SIZE ** 2 && gGame.markedCount === gLevel.MINES;
 }
 
-function gameOver() {
+function gameOver(isWin = false) {
 	console.log(`***GAME OVER***`);
+	renderGameOverMsg(isWin);
+	var url = isWin ? '/sound/win-game.mp3' : '/sound/mine-click.wav';
+	playSound(url);
+	gLives = gHints = [];
 	clearTimer();
+	gGame.isOn = false;
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -203,4 +244,26 @@ function changeLevel(elBtnLvl) {
 		elBtnLvl.classList.add('marked');
 		initGame();
 	}
+}
+
+function useHint() {
+	if (gHints.length > 0) {
+		var rndLocation = getRandomLocation();
+		var currCell = gBoard[rndLocation.i][rndLocation.j];
+		while (currCell.isShown || currCell.isMarked) {
+			rndLocation = getRandomLocation();
+			currCell = gBoard[rndLocation.i][rndLocation.j];
+		}
+		revealHint(rndLocation.i, rndLocation.j);
+		gHints.pop();
+		renderHints();
+	}
+}
+
+function revealHint(row, col) {
+	var elCell = getCellSelector(row, col);
+	expandShown(gBoard, elCell, row, col);
+	setTimeout(() => {
+		expandShown(gBoard, elCell, row, col, false);
+	}, HINT_DISPLAY_TIME);
 }
