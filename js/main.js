@@ -95,7 +95,6 @@ function setRandomMines(board) {
 		};
 
 		gMinesLocations.push({ i: mineLocation.i, j: mineLocation.j });
-		//console.log({ i: mineLocation.i, j: mineLocation.j });
 	}
 }
 
@@ -188,7 +187,6 @@ function expandShown(board, elCell, i, j, toShow = true) {
 				var currNegCol = j + diffCol;
 				if (isLocationInRange(currNegRow, currNegCol)) {
 					var negCell = board[currNegRow][currNegCol];
-					console.log(negCell);
 					if (negCell.isShown !== toShow) {
 						negCell.isShown = toShow;
 						gGame.shownCount += toShow ? 1 : -1;
@@ -201,7 +199,6 @@ function expandShown(board, elCell, i, j, toShow = true) {
 	}
 	
 	if (currCell.isShown !== toShow) {
-		console.log(i, j);
 		gGame.shownCount += toShow ? 1 : -1;
 		currCell.isShown = currCell.isMarked = toShow;
 	}
