@@ -20,16 +20,14 @@ const LOSER = '🤯';
 const LEFT_CLICK_CODE = 1;
 const RIGHT_CLICK_CODE = 3;
 const HINT_DISPLAY_TIME = 1000;
+var CELL_SIZE = 30; //IN PIXELS
 
 var gBoard;
 var gMineLocations;
 var gLives;
 var gHints;
 var gInterval;
-var gLevel = {
-	SIZE: 4,
-	MINES: 2,
-};
+var gLevel = null;
 var gGame = {
 	isOn: false,
 	shownCount: 0,
@@ -37,10 +35,11 @@ var gGame = {
 	secsPassed: 0,
 };
 
-// ------------------------------------------------------------------------------------------------ //
+// ---------------------------------------- INITIALS STEPS ---------------------------------------- //
 
 function initGame() {
 	console.log(`*** INITIALIZE GAME ***`);
+	if (!gLevel) changeLevel();
 	gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 };
 	gLives = [LIVE, LIVE, LIVE];
 	gHints = [HINT, HINT, HINT];
@@ -102,21 +101,19 @@ function getMineLocation(board) {
 	return rndLocation;
 }
 
-// ------------------------------------------------------------------------------------------------ //
+// ---------------------------------------- CLICK HANDLERS ---------------------------------------- //
 
-function firstClickIsntMine(i, j) {
+function adjustmentBoard(i, j) {
 	while (gBoard[i][j].isMine) {
 		gBoard = buildBoard();
 	}
 	renderBoard();
-	return gBoard[i][j];
 }
 
 function handleFirstClick(i, j) {
-	var cell = gBoard[i][j];
 	if (gGame.secsPassed === 0) {
-		if (cell.isMine) {
-			cell = firstClickIsntMine(i, j);
+		if (gBoard[i][j].isMine) {
+			adjustmentBoard(i, j);
 		}
 		gGame.isOn = true;
 		startTimer();
@@ -126,7 +123,7 @@ function handleFirstClick(i, j) {
 
 function leftClickHandle(cell, elCell, i, j) {
 	if (!gGame.isOn) {
-		if (gGame.secsPassed === 0) handleFirstClick(i,j);
+		if (gGame.secsPassed === 0) handleFirstClick(i, j);
 		else return;
 	}
 
@@ -141,16 +138,27 @@ function leftClickHandle(cell, elCell, i, j) {
 			return gameOver(false);
 		}
 	} else {
+		if (cell.isMarked){
+			cell.isMarked = false;
+			if (!gBoard[i][j].isMine)
+			gGame.markedCount--;
+			gGame.shownCount++;
+			cell.isShown = true;
+			renderCell({i:i, j:j})
+		}
 		expandShown(gBoard, elCell, i, j);
 		playSound('/sound/cell-click.wav');
 	}
 }
+
 function rightClickHandle(cell, i, j) {
 	if (!gGame.isOn) {
 		gGame.isOn = true;
 		startTimer();
 	}
-	gGame.markedCount++;
+	if (!gBoard[i][j].isShown || !gBoard[i][j].isMarked){
+		gGame.markedCount++;
+	}
 	cell.isMarked = cell.isShown = true;
 	playSound('/sound/flag-click.wav');
 	renderCell({ i: i, j: j }, FLAG);
@@ -200,10 +208,13 @@ function expandShown(board, elCell, i, j, toShow = true) {
 	return;
 }
 
-// ------------------------------------------------------------------------------------------------ //
+// -------------------------------------- GAME OVER FUNCTIONS ------------------------------------- //
 
 function isVictory() {
-	return gGame.markedCount + gGame.shownCount === gLevel.SIZE ** 2 && gGame.markedCount === gLevel.MINES;
+	return (
+		gGame.markedCount + gGame.shownCount === gLevel.SIZE ** 2 &&
+		gGame.markedCount === gLevel.MINES
+	);
 }
 
 function gameOver(isWin = false) {
@@ -216,33 +227,41 @@ function gameOver(isWin = false) {
 	gGame.isOn = false;
 }
 
-// ------------------------------------------------------------------------------------------------ //
+// --------------------------------------------- OTHERS ------------------------------------------- //
 
 function isLocationInRange(row, col) {
 	return row >= 0 && row < gLevel.SIZE && col >= 0 && col < gLevel.SIZE;
 }
 
-function changeLevel(elBtnLvl) {
-	if (!elBtnLvl.classList.contains('marked')) {
-		var elLevels = document.querySelectorAll('.btn-level');
-		for (var i = 0; i < elLevels.length; i++)
-			elLevels[i].classList.remove('marked');
+function changeLevel(elBtnLvl = null) {
+	if (elBtnLvl) {
+		if (!elBtnLvl.classList.contains('marked')) {
+			var elLevels = document.querySelectorAll('.btn-level');
+			for (var i = 0; i < elLevels.length; i++)
+				elLevels[i].classList.remove('marked');
 
-		switch (elBtnLvl.innerText) {
-			case 'Beginner':
-				gLevel = { SIZE: 4, MINES: 2 };
-				break;
-			case 'Medium':
-				gLevel = { SIZE: 8, MINES: 12 };
-				break;
-			case 'Expert':
-				gLevel = { SIZE: 12, MINES: 30 };
-				break;
-			default:
-				break;
+			switch (elBtnLvl.innerText) {
+				case 'Beginner':
+					gLevel = { SIZE: 4, MINES: 2 };
+					CELL_SIZE = 60;
+					break;
+				case 'Medium':
+					gLevel = { SIZE: 8, MINES: 12 };
+					CELL_SIZE = 30;
+					break;
+				case 'Expert':
+					gLevel = { SIZE: 12, MINES: 30 };
+					CELL_SIZE = 30;
+					break;
+				default:
+					break;
+			}
+			elBtnLvl.classList.add('marked');
+			initGame();
 		}
-		elBtnLvl.classList.add('marked');
-		initGame();
+	} else {
+		gLevel = { SIZE: 4, MINES: 2 };
+		CELL_SIZE = 60;
 	}
 }
 

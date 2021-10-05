@@ -17,16 +17,16 @@ function createSquareMat(size) {
 	}
 	return mat;
 }
-// ------------------------------------- R E N D E R  C E L L  \  M A T R I X -------------------------------------- //
+// ---------------------------------------- R E N D E R  C E L L S  \  M A T R I X --------------------------------- //
 
 function renderBoard() {
 	// creating board
 	var strHTML = `<table align="center"><tbody>\n`;
 
-	// information-row
-	strHTML += `<tr class="info-row"></td>\n
-	<td class="cell user" style="width:${(gBoard.length / 2) * 30}px" onclick="initGame()">${PLAYER}</td>\n
-	<td class="cell timer" style="width:${(gBoard.length / 2) * 30}px; cursor:Block">⏰ <span></span></td>
+	// information-top-row
+	strHTML += `<tr class="info-top-row"></td>\n
+	<td class="cell user" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px; " onclick="initGame()">${PLAYER}</td>\n
+	<td class="cell timer" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px; cursor:Block">⏰ <span></span></td>
 	\n</tr>`;
 
 	// creating board cells
@@ -35,7 +35,7 @@ function renderBoard() {
 		for (var j = 0; j < gBoard.length; j++) {
 			var cell = gBoard[i][j];
 			var className = `cell cell-${i}-${j}`;
-			strHTML += `<td class="${className}" onmousedown="cellClicked(event, this, ${i}, ${j})">${
+			strHTML += `<td class="${className}" onmousedown="cellClicked(event, this, ${i}, ${j})" style="width:${CELL_SIZE}px; height: ${CELL_SIZE}px;">${
 				cell.isShown ? cell.minesAroundCount : ''
 			}</td>\n`;
 		}
@@ -44,8 +44,8 @@ function renderBoard() {
 	
 	// information-row
 	strHTML += `<tr class="info-bottom-row">\n
-	<td class="cell lives" style="width:${(gBoard.length / 2) * 30}px"></td>\n
-	<td class="cell hints" style="width:${(gBoard.length / 2) * 30}px" onClick="useHint()"></td>\n</tr>`;
+	<td class="cell lives" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px;"></td>\n
+	<td class="cell hints" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px;" onClick="useHint()"></td>\n</tr>`;
 	strHTML += '<tr class="game-over-row"></tr></tbody></table>';
 	var elContainer = document.querySelector('.game-area');
 	elContainer.innerHTML = strHTML;
@@ -86,10 +86,10 @@ function renderGameOverMsg(isWin){
 	var msg = isWin ? 'YOU WON' : `YOU LOSE`
 	var msgColor = isWin ? 'green' : 'darkred';
 	var elGameOverMsg = document.querySelector('.game-over-row');
-	elGameOverMsg.innerHTML = `<td class="cell" style="color: ${msgColor}; width:${(gBoard.length) * 30}px; height:40px">${msg}<br/><span style="color:black;">🕹GAME OVER🕹</span></td>\n`
+	elGameOverMsg.innerHTML = `<td class="cell" style="color: ${msgColor}; width:${(gBoard.length) * CELL_SIZE}px; height:40px">${msg}<br/><span style="color:black;">🕹GAME OVER🕹</span></td>\n`
 }
 
-// -------------------------------------------- G E T   R A N D O M S -------------------------------------------- //
+// --------------------------------------------- GET   RANDOMS --------------------------------------------- //
 
 //Inclusive
 function getRandomInt(min, max) {
@@ -104,7 +104,7 @@ function getRandomLocation() {
 	return { i: rndI, j: rndJ };
 }
 
-// -------------------------------------------------- T I M E R -------------------------------------------------- //
+// -------------------------------------------------- TIMER -------------------------------------------------- //
 
 function resetTimer(){
 	document.querySelector('.timer span').innerText = '00:00'
@@ -129,7 +129,7 @@ function clearTimer() {
 	gInterval = null;
 }
 
-// ------------------------------------------------- O T H E R S ------------------------------------------------- //
+// ------------------------------------------------- OTHERS ------------------------------------------------- //
 
 function playSound(url) {
 	var sound = new Audio(url);
