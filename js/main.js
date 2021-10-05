@@ -246,7 +246,7 @@ function isFullBoard() {
 function gameOver(isWin = false) {
 	console.log(`***GAME OVER***`);
 	renderGameOverMsg(isWin);
-	var url = isWin ? '/sound/win-game.mp3' : '/sound/mine-click.wav';
+	var url = isWin ? 'sound/win-game.mp3' : 'sound/mine-click.wav';
 	playSound(url);
 	gLives = gHints = [];
 	clearTimer();
