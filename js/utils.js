@@ -23,7 +23,7 @@ function renderBoard() {
 	// creating board
 	var strHTML = `<table align="center"><tbody>\n`;
 
-	// information-top-row
+	// information at top-row
 	strHTML += `<tr class="info-top-row"></td>\n
 	<td class="cell user" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px; " onclick="initGame()">${PLAYER}</td>\n
 	<td class="cell timer" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px; cursor:Block">⏰ <span></span></td>
@@ -42,7 +42,7 @@ function renderBoard() {
 		strHTML += '</tr>\n';
 	}
 	
-	// information-row
+	// information at bottom-row
 	strHTML += `<tr class="info-bottom-row">\n
 	<td class="cell lives" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px;"></td>\n
 	<td class="cell hints" style="width:${(gBoard.length / 2) * CELL_SIZE}px; height:${CELL_SIZE}px;" onClick="useHint()"></td>\n</tr>`;

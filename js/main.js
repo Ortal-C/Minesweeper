@@ -103,63 +103,83 @@ function getMineLocation(board) {
 
 // ---------------------------------------- CLICK HANDLERS ---------------------------------------- //
 
-function adjustmentBoard(i, j) {
+function nonMineStartBoard(i, j) {
 	while (gBoard[i][j].isMine) {
 		gBoard = buildBoard();
 	}
 	renderBoard();
 }
 
-function handleFirstClick(i, j) {
+function handleFirstClick(elCell, i, j) {
 	if (gGame.secsPassed === 0) {
 		if (gBoard[i][j].isMine) {
-			adjustmentBoard(i, j);
+			nonMineStartBoard(i, j);
 		}
 		gGame.isOn = true;
 		startTimer();
-		renderCell({ i: i, j: j });
+		expandShown(gBoard, elCell, i, j);
 	}
+}
+
+function saverSoulForRescue(i, j) {
+	if (!(gBoard[i][j].isMarked && gBoard[i][j].isMine)) {
+		// if not rescued yet
+		gBoard[i][j].isMarked = true;
+		gGame.markedCount++;
+		renderCell({ i: i, j: j }, SAVER_SOUL);
+	}
+	else if (gBoard[i][j].isMarked){
+		renderCell({ i: i, j: j }, SAVER_SOUL);
+	}
+	gLives.pop();
+	renderLives();
 }
 
 function leftClickHandle(cell, elCell, i, j) {
 	if (!gGame.isOn) {
-		if (gGame.secsPassed === 0) handleFirstClick(i, j);
-		else return;
-	}
+		if (gGame.secsPassed === 0) handleFirstClick(elCell, i, j);
+	} 
 
-	if (cell.isMine) {
-		if (gLives.length > 0) {
-			gGame.markedCount++;
-			renderCell({ i: i, j: j }, SAVER_SOUL);
-			gLives.pop();
-			renderLives();
-		} else {
-			renderCell({ i: i, j: j }, MINE);
-			return gameOver(false);
+	else {
+		if (cell.isShown) return;
+		else if (cell.isMine) {
+			if (gLives.length > 0) {
+				saverSoulForRescue(i, j);
+			} 
+			else {
+				renderCell({ i: i, j: j });
+				gameOver(false);
+			}
+			return;
 		}
-	} else {
-		if (cell.isMarked){
+		else if (cell.isMarked) {
 			cell.isMarked = false;
-			if (!gBoard[i][j].isMine)
 			gGame.markedCount--;
 			gGame.shownCount++;
-			cell.isShown = true;
-			renderCell({i:i, j:j})
+			renderCell({ i: i, j: j });
+			return;
 		}
-		expandShown(gBoard, elCell, i, j);
-		playSound('/sound/cell-click.wav');
+		else {
+			expandShown(gBoard, elCell, i, j);
+			playSound('/sound/cell-click.wav');
+		}
 	}
+	return;
 }
 
 function rightClickHandle(cell, i, j) {
 	if (!gGame.isOn) {
-		gGame.isOn = true;
-		startTimer();
+		if (gGame.secsPassed === 0) {
+			gGame.isOn = true;
+			startTimer();
+		}
+		return;
 	}
-	if (!gBoard[i][j].isShown || !gBoard[i][j].isMarked){
-		gGame.markedCount++;
+	if (gBoard[i][j].isShown) {
+		gGame.shownCount--;
 	}
-	cell.isMarked = cell.isShown = true;
+	cell.isMarked = true;
+	gGame.markedCount++;
 	playSound('/sound/flag-click.wav');
 	renderCell({ i: i, j: j }, FLAG);
 }
@@ -189,8 +209,10 @@ function expandShown(board, elCell, i, j, toShow = true) {
 				var currNegCol = j + diffCol;
 				if (isLocationInRange(currNegRow, currNegCol)) {
 					var negCell = board[currNegRow][currNegCol];
+					console.log(negCell);
 					if (negCell.isShown !== toShow) {
 						negCell.isShown = toShow;
+						gGame.shownCount += toShow ? 1 : -1;
 						elCell = getCellSelector(currNegRow, currNegCol);
 						expandShown(board, elCell, currNegRow, currNegCol, toShow);
 					}
@@ -199,12 +221,12 @@ function expandShown(board, elCell, i, j, toShow = true) {
 		}
 	}
 
-	if (currCell.isShown !== toShow || currCell.isMarked !== toShow) {
-		currCell.isShown = currCell.isMarked = toShow;
+	console.log(`currCell`, currCell);
+	if (currCell.isShown !== toShow || currCell.isMarked !== toShow ) {
 		gGame.shownCount += toShow ? 1 : -1;
-		renderCell({ i: i, j: j }, toShow ? currCell.minesAroundCount : ' ');
-		console.log(`i:${i} j:${j}`, gGame);
+		currCell.isShown = currCell.isMarked = toShow;
 	}
+	renderCell({ i: i, j: j }, toShow ? currCell.minesAroundCount : ' ');
 	return;
 }
 
