@@ -47,9 +47,15 @@ function renderBoard() {
 
 	// information at bottom-row
 	strHTML += `<tr class="info-bottom-row">\n
-	<td class="cell lives" style="width:${(gBoard.length / 3) * CELL_SIZE}px; height:${CELL_SIZE}px;"></td>\n
-	<td class="cell hints" style="width:${(gBoard.length / 3) * CELL_SIZE}px; height:${CELL_SIZE}px;" onClick="useHint()"></td>\n
-	<td class="cell safe" style="width:${(gBoard.length / 3) * CELL_SIZE}px; height:${CELL_SIZE}px;" onClick="useSafeMove()"></td>\n</tr>`;
+	<td class="cell lives" style="width:${
+		(gBoard.length / 3) * CELL_SIZE
+	}px; height:${CELL_SIZE}px;"></td>\n
+	<td class="cell hints" style="width:${
+		(gBoard.length / 3) * CELL_SIZE
+	}px; height:${CELL_SIZE}px;" onClick="useHint()"></td>\n
+	<td class="cell safe" style="width:${
+		(gBoard.length / 3) * CELL_SIZE
+	}px; height:${CELL_SIZE}px;" onClick="useSafeMove()"></td>\n</tr>`;
 	strHTML += '<tr class="game-over-row"></tr></tbody></table>';
 
 	var elContainer = document.querySelector('.game-area');
@@ -63,13 +69,16 @@ function renderBoard() {
 
 function getCellContent(location) {
 	var elCell = getCellSelector(location);
-	return elCell.innerHTML+'';
+	return elCell.innerHTML + '';
 }
 
 function renderCell(location, value = null) {
 	if (!value) value = gBoard[location.i][location.j].minesAroundCount;
+
 	if (value < 0) value = MINE;
+	if (value === 0) value = EMPTY;
 	var elCell = getCellSelector(location);
+	gBoard[location.i][location.j].isShown ? elCell.classList.add('clicked') : elCell.classList.remove('clicked');
 	elCell.innerHTML = value;
 }
 
@@ -104,7 +113,9 @@ function renderGameOverMsg(isWin) {
 	var msg = isWin ? 'YOU WON' : `YOU LOSE`;
 	var msgColor = isWin ? 'green' : 'darkred';
 	var elGameOverMsg = document.querySelector('.game-over-row');
-	elGameOverMsg.innerHTML = `<td class="cell" style="color: ${msgColor}; width:${gBoard.length * CELL_SIZE}px; height:40px">${msg}<br/><span style="color:black;">🕹GAME OVER🕹</span></td>\n`;
+	elGameOverMsg.innerHTML = `<td class="cell" style="color: ${msgColor}; width:${
+		gBoard.length * CELL_SIZE
+	}px; height:40px">${msg}<br/><span style="color:black;">🕹GAME OVER🕹</span></td>\n`;
 }
 
 // -------------------------------------------------- TIMER -------------------------------------------------- //

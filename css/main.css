@@ -4,7 +4,7 @@
 
 body {
 	min-height: 100vh;
-	background: white url('./img/bgc.jpg') center center/cover fixed;
+	background: white url('/img/bgc.jpg') center center/cover fixed;
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
@@ -18,7 +18,7 @@ div {
 	position: fixed;
 	top: 2%;
 	right: 2%;
-	height: 30px;
+	height: 50px;
 	display: inline-block;
 }
 
@@ -127,19 +127,46 @@ div {
 }
 
 .clicked {
-	background: linear-gradient(to bottom, #dcdcdc 5%, #dcdcdc 100%);
+	background: whitesmoke;
 }
 
 .game-over-msg {
 	color: darkred;
 }
 
+.best-score {
+	position: fixed;
+	top: 2%;
+	right: 60px;
+	height: 30px;
+	display: inline-block;
+}
+
+.img-best-score {
+	height: 40px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+
+
 /* ---------------------------------------- F O O T E R ------------------------------------------- */
 
 footer {
-	position: absolute;
+	position: fixed;
 	bottom: 0px; /* negative value of footer height */
-	height: 2%;
+	height: 25px;
 	width: 100%;
 	clear: both;
+}
+footer div {
+	border-top: 2px dotted lightgray;
+	background-color: whitesmoke;
+	width: 100%;
+	height: 25px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background: #FFFFFF;
+	text-shadow: 1px 1px 0 #8a8a8a, 1px -1px 0 #8a8a8a, -1px 1px 0 #8a8a8a, -1px -1px 0 #8a8a8a, 1px 0px 0 #8a8a8a, 0px 1px 0 #8a8a8a, -1px 0px 0 #8a8a8a, 0px -1px 0 #8a8a8a;	
 }

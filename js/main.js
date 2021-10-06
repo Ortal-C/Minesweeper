@@ -21,7 +21,7 @@ const LOSER = '🤯';
 const LEFT_CLICK_CODE = 1;
 const RIGHT_CLICK_CODE = 3;
 const HELP_DISPLAY_TIME = 1000;
-var CELL_SIZE = 30;  /* NOTE: size in pixels */
+var CELL_SIZE = 30; /* NOTE: size in pixels */
 
 var gBoard;
 var gTimerInterval;
@@ -30,18 +30,26 @@ var gLevel = null;
 var gLives;
 var gHints;
 var gSafeMoves;
+var gScores =[];
 var gGame = {
 	isOn: false,
 	shownCount: 0,
 	markedCount: 0,
 	secsPassed: 0,
+	score: 0,
 };
 
 // ---------------------------------------- INITIALS STEPS ---------------------------------------- //
 
 function initGame() {
 	if (!gLevel) changeLevel();
-	gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 };
+	gGame = {
+		isOn: false,
+		shownCount: 0,
+		markedCount: 0,
+		secsPassed: 0,
+		score: 0,
+	};
 	initHelpFeatures();
 	gBoard = buildBoard();
 	renderBoard(gBoard);
@@ -49,7 +57,7 @@ function initGame() {
 	console.log(`*** GAME INITIALIZED WITH BOARD SIZE = ${gLevel.SIZE} ***`);
 }
 
-function initHelpFeatures(){
+function initHelpFeatures() {
 	gLives = [LIVE, LIVE, LIVE];
 	gHints = [HINT, HINT, HINT];
 	gSafeMoves = [SAFE_MOVE, SAFE_MOVE, SAFE_MOVE];
@@ -95,7 +103,6 @@ function setRandomMines(board) {
 		};
 
 		gMinesLocations.push({ i: mineLocation.i, j: mineLocation.j });
-		//console.log({ i: mineLocation.i, j: mineLocation.j });
 	}
 }
 
@@ -130,10 +137,10 @@ function cellClicked(event, elCell, i, j) {
 }
 
 function leftClickHandle(cell, elCell, i, j) {
+	`User made a left-click on cell: (${i},${j})`;
 	if (!gGame.isOn) {
 		if (gGame.secsPassed === 0) handleFirstClick(elCell, i, j);
-	}
-	else {
+	} else {
 		if (cell.isShown) return;
 		else if (cell.isMine) {
 			if (gLives.length > 0) {
@@ -143,25 +150,24 @@ function leftClickHandle(cell, elCell, i, j) {
 				gameOver(false);
 			}
 			return;
-		}
-		else if (cell.isMarked) {
+		} else if (cell.isMarked) {
 			if (getCellContent({ i: i, j: j }) !== SAVER_SOUL) {
-				gGame.shownCount++;
 				cell.isMarked = false;
 				gGame.markedCount--;
-				renderCell({ i: i, j: j });
+				cell.isShown = true;
+				gGame.shownCount++;
+				//renderCell({ i: i, j: j });
 			}
-			return;
-		} 
-		else {
-			expandShown(gBoard, elCell, i, j);
-			playSound('./sound/cell-click.wav');
+			//return;
 		}
+		expandShown(gBoard, elCell, i, j);
+		playSound('/sound/cell-click.wav');
 	}
 	return;
 }
 
 function rightClickHandle(cell, i, j) {
+	`User made a right-click on cell: (${i},${j})`;
 	if (!gGame.isOn) {
 		if (gGame.secsPassed === 0) {
 			gGame.isOn = true;
@@ -172,10 +178,11 @@ function rightClickHandle(cell, i, j) {
 	if (gBoard[i][j].isShown) {
 		gGame.shownCount--;
 		cell.isShown = false;
+		gGame.score -= 10;
 	}
 	cell.isMarked = true;
 	gGame.markedCount++;
-	playSound('./sound/flag-click.wav');
+	playSound('/sound/flag-click.wav');
 	renderCell({ i: i, j: j }, FLAG);
 }
 
@@ -184,14 +191,15 @@ function expandShown(board, elCell, i, j, toShow = true) {
 	if (currCell.minesAroundCount === 0) {
 		for (var diffRow = -1; diffRow < 2; diffRow++) {
 			for (var diffCol = -1; diffCol < 2; diffCol++) {
+				if (diffRow === 0 && diffCol === 0) continue;
 				var currNegRow = i + diffRow;
 				var currNegCol = j + diffCol;
 				if (isLocationInRange(currNegRow, currNegCol)) {
 					var negCell = board[currNegRow][currNegCol];
-					console.log(negCell);
 					if (negCell.isShown !== toShow) {
 						negCell.isShown = toShow;
 						gGame.shownCount += toShow ? 1 : -1;
+						gGame.score += toShow ? 10 : -10;
 						elCell = getCellSelector({ i: currNegRow, j: currNegCol });
 						expandShown(board, elCell, currNegRow, currNegCol, toShow);
 					}
@@ -199,13 +207,14 @@ function expandShown(board, elCell, i, j, toShow = true) {
 			}
 		}
 	}
-	
+
 	if (currCell.isShown !== toShow) {
-		console.log(i, j);
 		gGame.shownCount += toShow ? 1 : -1;
+		gGame.score += toShow ? 10 : -10;
 		currCell.isShown = currCell.isMarked = toShow;
+		
 	}
-	renderCell({ i: i, j: j }, toShow ? currCell.minesAroundCount : ' ');
+	renderCell({ i: i, j: j }, toShow ? currCell.minesAroundCount : EMPTY);
 	return;
 }
 
@@ -217,7 +226,7 @@ function handleFirstClick(elCell, i, j) {
 		gGame.isOn = true;
 		startTimer();
 		expandShown(gBoard, elCell, i, j);
-		playSound('./sound/cell-click.wav');
+		playSound('sound/cell-click.wav');
 	}
 }
 
@@ -247,12 +256,13 @@ function isVictory() {
 
 function gameOver(isWin = false) {
 	renderGameOverMsg(isWin);
-	var url = isWin ? './sound/win-game.mp3' : './sound/mine-click.wav';
+	var url = isWin ? '/sound/win-game.mp3' : '/sound/mine-click.wav';
 	playSound(url);
 	gLives = gHints = [];
 	clearTimer();
 	gGame.isOn = false;
 	console.log(`*** GAME OVER ***`);
+	//scoreStorage();
 }
 
 // -------------------------------------- USER HELP FEATURES -------------------------------------- //
@@ -283,21 +293,31 @@ function useSafeMove() {
 	if (gSafeMoves.length > 0) {
 		var rndLocation = getRandomLocation();
 		var currCell = gBoard[rndLocation.i][rndLocation.j];
-		while (
-			!isFullBoard() &&
-			(currCell.isShown || currCell.isMarked || currCell.isMine)
-		) {
+		while (!isFullBoard() && currCell.isMine) {
 			rndLocation = getRandomLocation();
 			currCell = gBoard[rndLocation.i][rndLocation.j];
+			if (!currCell.isShown || !currCell.isMarked) break;
 		}
-		var prevContent = currCell.isShown ? getCellContent(rndLocation) : ' ';
-		renderCell(rndLocation);
-		setTimeout(() => {
-			renderCell(rndLocation, prevContent);
-		}, HELP_DISPLAY_TIME);
+
+		revealSafeMove(currCell, rndLocation);
 		gSafeMoves.pop();
 		renderSafeMoves();
 	}
+}
+
+function revealSafeMove(currCell, location) {
+	var prevContent = currCell.isShown ? getCellContent(rndLocation) : EMPTY;
+	var prevIsShown = currCell.isShown;
+	var prevIsMarked = currCell.isMarked;
+	//Reavel content
+	currCell.isShown = true;
+	renderCell(location);
+	//Unreavel
+	setTimeout(() => {
+		currCell.isShown = prevIsShown;
+		currCell.isMarked = prevIsMarked;
+		renderCell(location, prevContent);
+	}, HELP_DISPLAY_TIME);
 }
 
 // --------------------------------------------- OTHERS ------------------------------------------- //
@@ -342,3 +362,21 @@ function changeLevel(elBtnLvl = null) {
 		CELL_SIZE = 60;
 	}
 }
+
+// function scoreStorage() {
+// 	debugger
+// 	var gameData = {
+// 		Score: `${gGame.score}`,
+// 		Time: `${gGame.secsPassed} seconds`,
+// 		Level: `${gLevel.SIZE} X ${gLevel.SIZE} `,
+// 	};
+// 	gScores.push(gameData);
+// 	if (localStorage){ 
+// 		localStorage.removeItem('scores')
+// 		localStorage.setItem({'scores': gScores});
+// 	}
+// }
+
+// function showScores() {
+	
+// }
