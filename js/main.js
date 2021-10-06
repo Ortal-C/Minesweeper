@@ -30,7 +30,6 @@ var gLevel = null;
 var gLives;
 var gHints;
 var gSafeMoves;
-var gScores =[];
 var gGame = {
 	isOn: false,
 	shownCount: 0,
@@ -38,6 +37,7 @@ var gGame = {
 	secsPassed: 0,
 	score: 0,
 };
+//var gScores =[];
 
 // ---------------------------------------- INITIALS STEPS ---------------------------------------- //
 
@@ -156,9 +156,7 @@ function leftClickHandle(cell, elCell, i, j) {
 				gGame.markedCount--;
 				cell.isShown = true;
 				gGame.shownCount++;
-				//renderCell({ i: i, j: j });
 			}
-			//return;
 		}
 		expandShown(gBoard, elCell, i, j);
 		playSound('/sound/cell-click.wav');
