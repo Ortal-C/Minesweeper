@@ -158,7 +158,7 @@ function leftClickHandle(cell, elCell, i, j) {
 				gGame.shownCount++;
 			}
 		}
-		expandShown(gBoard, elCell, i, j);
+		expandShown(i, j);
 		playSound('/sound/cell-click.wav');
 	}
 	return;
@@ -184,8 +184,8 @@ function rightClickHandle(cell, i, j) {
 	renderCell({ i: i, j: j }, FLAG);
 }
 
-function expandShown(board, elCell, i, j, toShow = true) {
-	var currCell = board[i][j];
+function expandShown(i, j, toShow = true) {
+	var currCell = gBoard[i][j];
 	if (currCell.minesAroundCount === 0) {
 		for (var diffRow = -1; diffRow < 2; diffRow++) {
 			for (var diffCol = -1; diffCol < 2; diffCol++) {
@@ -193,13 +193,13 @@ function expandShown(board, elCell, i, j, toShow = true) {
 				var currNegRow = i + diffRow;
 				var currNegCol = j + diffCol;
 				if (isLocationInRange(currNegRow, currNegCol)) {
-					var negCell = board[currNegRow][currNegCol];
+					var negCell = gBoard[currNegRow][currNegCol];
 					if (negCell.isShown !== toShow) {
 						negCell.isShown = toShow;
 						gGame.shownCount += toShow ? 1 : -1;
 						gGame.score += toShow ? 10 : -10;
-						elCell = getCellSelector({ i: currNegRow, j: currNegCol });
-						expandShown(board, elCell, currNegRow, currNegCol, toShow);
+						//elCell = getCellSelector({ i: currNegRow, j: currNegCol });
+						expandShown(currNegRow, currNegCol, toShow);
 					}
 				}
 			}
@@ -223,7 +223,7 @@ function handleFirstClick(elCell, i, j) {
 		}
 		gGame.isOn = true;
 		startTimer();
-		expandShown(gBoard, elCell, i, j);
+		expandShown(i, j);
 		playSound('sound/cell-click.wav');
 	}
 }
@@ -281,9 +281,9 @@ function useHint() {
 
 function revealHint(row, col) {
 	var elCell = getCellSelector(row, col);
-	expandShown(gBoard, elCell, row, col);
+	expandShown(row, col);
 	setTimeout(() => {
-		expandShown(gBoard, elCell, row, col, false);
+		expandShown(row, col, false);
 	}, HELP_DISPLAY_TIME);
 }
 
